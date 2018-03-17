@@ -40,7 +40,6 @@ class ArrayHelperTest extends TestCase
         $this->assertEquals(json_encode($value), (string) arr($value));
     }
 
-
     /** @test */
     public function does_arr_has_methods()
     {
@@ -82,6 +81,7 @@ class ArrayHelperTest extends TestCase
              arr(['hi'])->tap(function ($value) {
                  $this->data = [];
                  $value = [];
+
                  return [];
              })->get(0)
         );
@@ -106,7 +106,7 @@ class ArrayHelperTest extends TestCase
         $this->assertEquals(
             ['a!', 'b!'],
             arr(['a', 'b'])->map(function ($item) {
-                return $item . '!'; 
+                return $item.'!';
             })
             ->get()
         );
@@ -118,7 +118,7 @@ class ArrayHelperTest extends TestCase
         $this->assertEquals(
             ['a!', 'b!'],
             arr(['a', 'b'])->walk(function (&$item) {
-                $item = $item . '!'; 
+                $item = $item.'!';
             })
             ->get()
         );
@@ -139,7 +139,7 @@ class ArrayHelperTest extends TestCase
     {
         $this->assertEquals(
             ['a', 'b'],
-            arr(['a', 'b', 'c'])->filter(function($item){
+            arr(['a', 'b', 'c'])->filter(function ($item) {
                 return $item !== 'c';
             })
             ->get()
@@ -191,7 +191,6 @@ class ArrayHelperTest extends TestCase
                     ->endif()
                     ->map('trim')
                     ->get();
-        
 
         $this->assertEquals(['HI', 'WELCOME'], $result);
     }
@@ -234,7 +233,6 @@ class ArrayHelperTest extends TestCase
             $this->assertEquals($data[2], arr($data[0])->{$func}(...$data[1])->get());
         }
     }
-
 
     /** @test */
     public function ar_throw_exception_if_given_wrong_method()

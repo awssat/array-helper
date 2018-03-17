@@ -2,12 +2,11 @@
 
 use Awssat\ArrayHelper\ArrayHelper;
 
-
-if (! function_exists('arr')) {
+if (!function_exists('arr')) {
     /**
-     * A flexible & powerful array manipulation helper
+     * A flexible & powerful array manipulation helper.
      *
-     * @param string $value an array, or multiple parameters to the function 
+     * @param string $value an array, or multiple parameters to the function
      *
      * @author abdumu <hi@abdumu.com>
      *
