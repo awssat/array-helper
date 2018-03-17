@@ -2,9 +2,8 @@
 
 namespace Awssat\ArrayHelper;
 
-
 /**
- * @method \Awssat\ArrayHelper\ArrayHelper push(mixed $value1 [, mixed $... ]) 
+ * @method \Awssat\ArrayHelper\ArrayHelper push(mixed $value1 [, mixed $... ])
  * @method \Awssat\ArrayHelper\ArrayHelper prepend(mixed $value1 [, mixed $... ])
  * @method \Awssat\ArrayHelper\ArrayHelper values()
  * @method \Awssat\ArrayHelper\ArrayHelper keys([ mixed $search_value [, bool $strict]])
@@ -86,12 +85,11 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
     protected $isElse = [];
     protected $insideIfCondition = false;
     protected $dataHasChanged = false;
-    
+
     protected $aliasMethods = [
-        'exists' => 'in_array',
+        'exists'  => 'in_array',
         'prepend' => 'array_unshift',
     ];
-
 
     /**
      * Initiate the class.
@@ -100,18 +98,18 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
      */
     public function __construct()
     {
-        if(func_num_args() > 1) {
+        if (func_num_args() > 1) {
             $this->data = func_get_args();
-        } else if(func_num_args() == 1) {
+        } elseif (func_num_args() == 1) {
             $this->set(func_get_arg(0));
         }
 
         return $this;
     }
 
-    static public function make()
+    public static function make()
     {
-        return (new static(...func_get_args()));
+        return new static(...func_get_args());
     }
 
     /**
@@ -142,28 +140,27 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
 
         $snake_method_name = strtolower(preg_replace('/([a-z]{1})([A-Z]{1})/', '$1_$2', $methodName));
 
-        if(array_key_exists($snake_method_name, $this->aliasMethods)) {
+        if (array_key_exists($snake_method_name, $this->aliasMethods)) {
             $snake_method_name = $this->aliasMethods[$snake_method_name];
         }
 
-       if (in_array($snake_method_name, ['combine_keys', 'combine_values', 'equal', 'contains', 'empty'])) {
-           return $this->do(function() use($snake_method_name, $arguments) {
-
-                if($snake_method_name == 'combine_keys') {
+        if (in_array($snake_method_name, ['combine_keys', 'combine_values', 'equal', 'contains', 'empty'])) {
+            return $this->do(function () use ($snake_method_name, $arguments) {
+                if ($snake_method_name == 'combine_keys') {
                     return array_combine($arguments[0], $this->data);
                 }
 
                 if ($snake_method_name == 'combine_values') {
                     return array_combine($this->data, $arguments[0]);
                 }
-            
+
                 if ($snake_method_name == 'equal') {
                     return $this->equal($this->data, $arguments[0]);
                 }
 
-                if ($snake_method_name == 'contains' && sizeof($arguments)) {
-                    foreach($arguments as $argument) {
-                        if(! in_array($argument, $this->data)) {
+                if ($snake_method_name == 'contains' && count($arguments)) {
+                    foreach ($arguments as $argument) {
+                        if (!in_array($argument, $this->data)) {
                             return false;
                         }
                     }
@@ -174,14 +171,12 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
                 if ($snake_method_name == 'empty') {
                     return count($this->data) === 0;
                 }
-
-             });
-
-       } else if (function_exists('array_'.$snake_method_name)) {
+            });
+        } elseif (function_exists('array_'.$snake_method_name)) {
             return $this->do('array_'.$snake_method_name, ...$arguments);
-        } else if (function_exists($snake_method_name)) {
-           return $this->do($snake_method_name, ...$arguments);
-       } else {
+        } elseif (function_exists($snake_method_name)) {
+            return $this->do($snake_method_name, ...$arguments);
+        } else {
             // Couldn't find either?
             throw new \BadMethodCallException('Method ('.$methodName.') does not exists!');
         }
@@ -190,19 +185,20 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @param int|null $index
-     * @param boolean $ignoreConditions
+     * @param bool     $ignoreConditions
+     *
      * @return array|self
      */
     public function get($index = null, $ignoreConditions = false)
     {
-        if(! is_null($index)) {
+        if (!is_null($index)) {
             return $this->data[$index];
         }
 
-        if ($this->skipIfTriggered() && ! $ignoreConditions) {
+        if ($this->skipIfTriggered() && !$ignoreConditions) {
             return $this;
         }
 
@@ -210,8 +206,8 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
     }
 
     /**
-     * get all items ignoring the current conditions
-     * 
+     * get all items ignoring the current conditions.
+     *
      * @return array
      */
     public function all()
@@ -229,13 +225,13 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
         if ($this->skipIfTriggered()) {
             return $this;
         }
-        
+
         $oldData = $this->data;
 
         if (is_array($value)) {
             $this->data = $value;
         } elseif ($value instanceof self) {
-           $this->data = $value->get(null, true);
+            $this->data = $value->get(null, true);
         } elseif ($value instanceof JsonSerializable) {
             $this->data = $value->jsonSerialize();
         } elseif ($value instanceof Traversable) {
@@ -251,7 +247,7 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
             }
         }
 
-        $this->dataHasChanged = ! $this->equal($oldData, $this->data);
+        $this->dataHasChanged = !$this->equal($oldData, $this->data);
 
         unset($oldData);
 
@@ -328,7 +324,7 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
 
                 $exceptionIndices = [];
 
-                if (! array_key_exists($callable, $exceptionIndices)) {
+                if (!array_key_exists($callable, $exceptionIndices)) {
                     foreach ($functionInfo->getParameters() as $order => $arg) {
                         //no: value
                         // if ($callable === 'array_intersect') {
@@ -364,15 +360,14 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
             !(isset($this->isIf[$this->conditionDepth]) && $this->isIf[$this->conditionDepth]) &&
             !(isset($this->isElse[$this->conditionDepth]) && $this->isElse[$this->conditionDepth])
         ) {
-
-            if(in_array($callable, [
+            if (in_array($callable, [
             'array_multisort', 'array_push', 'array_unshift', 'array_walk', 'array_walk_recursive',
             'arsort', 'asort', 'krsort', 'ksort', 'rsort', 'sort', 'uasort', 'uksort', 'usort', 'natcasesort',
             'natsort', 'shuffle',
             ])) {
                 return $this;
             }
-    
+
             return $result;
         }
 
@@ -382,14 +377,14 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
 
         $oldData = $this->data;
 
-        if(! ($callable instanceof \Closure) && in_array($callable, ['array_fill_keys', 'array_fill']) && is_array($result)) {
+        if (!($callable instanceof \Closure) && in_array($callable, ['array_fill_keys', 'array_fill']) && is_array($result)) {
             $this->data = $this->data + $result;
         } else {
             $this->data = $result;
         }
 
-        $this->dataHasChanged = ! $this->equal($oldData, $this->data);
-        
+        $this->dataHasChanged = !$this->equal($oldData, $this->data);
+
         unset($oldData);
 
         return $this;
@@ -418,7 +413,6 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
 
         $result = $this->do($callable, ...$args);
 
-
         if ($result instanceof self && $this->equal($lastData, $this->data)) {
             $this->falseIfTriggered[$this->conditionDepth] = true;
         } elseif (is_array($result) && $this->equal($lastData, $result)) {
@@ -434,7 +428,7 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
         return $this;
     }
 
-    protected function equal($array1, $array2) 
+    protected function equal($array1, $array2)
     {
         return is_array($array1) && is_array($array2)
             && count($array1) == count($array2)
@@ -442,7 +436,7 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
     }
 
     /**
-     * did last method changed the array value
+     * did last method changed the array value.
      *
      * @return bool
      */
@@ -489,7 +483,6 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
         return $this;
     }
 
-
     /**
      * Return the length of the current array.
      *
@@ -516,7 +509,7 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
     }
 
     /**
-     * unique hash of the array
+     * unique hash of the array.
      *
      * @return string
      */
@@ -530,7 +523,7 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
         return $this->__get($offset);
     }
 
-    public function offsetSet($offset, $value) 
+    public function offsetSet($offset, $value)
     {
         $this->__set($offset, $value);
     }
@@ -547,16 +540,14 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
 
     public function __get($index)
     {
-        if (! is_null($index)) {
+        if (!is_null($index)) {
             return $this->get($index);
         }
-
-        return null;
     }
 
     public function __set($index, $value)
     {
-        if($this->data[$index] !== $value) {
+        if ($this->data[$index] !== $value) {
             $this->dataHasChanged = true;
         }
 
