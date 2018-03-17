@@ -2,6 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/awssat/array-helper.svg?style=flat-square)](https://packagist.org/packages/awssat/array-helper)
 [![Build Status](https://img.shields.io/travis/awssat/array-helper/master.svg?style=flat-square)](https://travis-ci.org/awssat/array-helper)
+[![StyleCi Status](https://styleci.io/repos/125334496/shield)](https://styleci.io/repos/125334496)
 
 
 ⚡️  A flexible, simple & yet powerful array manipulation helper for PHP. It gives you the magic of method chaining and it's easier and shorter to be included in views. It Supports most of [PHP built-in array functions](http://php.net/manual/en/book.array.php)

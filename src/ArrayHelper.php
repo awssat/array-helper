@@ -111,7 +111,7 @@ class ArrayHelper implements \Countable, \ArrayAccess, \IteratorAggregate, \Seri
 
     static public function make()
     {
-        return (new static(func_get_args()));
+        return (new static(...func_get_args()));
     }
 
     /**
